@@ -1,19 +1,22 @@
 package com.example.tehik.controller;
 
+import com.example.tehik.dto.TaskCreationRequestDTO;
 import com.example.tehik.dto.TaskResponseDTO;
 import com.example.tehik.service.TaskService;
+import com.example.tehik.utils.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static com.example.tehik.utils.RequestUtil.getClientIpAddress;
@@ -25,7 +28,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public Page<TaskResponseDTO> getTasks(
+    public ResponseEntity<Page<TaskResponseDTO>> getTasks(
                                            HttpServletRequest request,
                                            @RequestParam(value = "page", defaultValue = "0") int page,
                                            @RequestParam(value = "size", defaultValue = "20") int size,
@@ -38,7 +41,25 @@ public class TaskController {
                 size,
                 Sort.by(sortDirection, "createdAt")
         );
-        return taskService.getTasksByIp(clientIp, pageable);
+        Page<TaskResponseDTO> pagedTasks = taskService.getTasksByIp(clientIp, pageable);
+
+        return ResponseEntity.ok(pagedTasks);
     }
 
+    @PostMapping
+    public ResponseEntity<TaskResponseDTO> createTask(
+            @Valid @RequestBody TaskCreationRequestDTO requestDTO,
+            HttpServletRequest request) {
+
+        String clientIp = RequestUtil.getClientIpAddress(request);
+        TaskResponseDTO responseDTO = taskService.createTask(requestDTO, clientIp);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(responseDTO.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(responseDTO);
+    }
 }

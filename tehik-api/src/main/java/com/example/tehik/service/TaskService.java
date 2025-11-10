@@ -1,6 +1,8 @@
 package com.example.tehik.service;
 
+import com.example.tehik.dto.TaskCreationRequestDTO;
 import com.example.tehik.dto.TaskResponseDTO;
+import com.example.tehik.entity.Task;
 import com.example.tehik.mappers.TaskMapper;
 import com.example.tehik.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,17 @@ public class TaskService {
 
     public Page<TaskResponseDTO> getTasksByIp(String ip, Pageable pageable){
         return taskRepository.findAllByIp(ip, pageable).map(taskMapper::toResponseDTO);
+    }
 
+    public TaskResponseDTO createTask(TaskCreationRequestDTO requestDTO, String ip) {
+        Task task = taskMapper.toEntity(requestDTO);
+
+        task.setIp(ip);
+
+        Task savedTask = taskRepository.save(task);
+
+        // TODO: Send Asynchronous Message to RabbitMQ
+
+        return taskMapper.toResponseDTO(savedTask);
     }
 }
