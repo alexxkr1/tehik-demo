@@ -8,5 +8,6 @@ public record TaskResponseDTO(
     Integer originalValue,
     Integer resultValue,
     TaskStatus status,
-    Instant createdAt
+    Instant createdAt,
+    Instant updatedAt
 ) { }
