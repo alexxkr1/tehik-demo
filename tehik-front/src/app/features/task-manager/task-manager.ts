@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TaskService } from '../../core/services/task.service';
+import { TaskService } from '@/core/services/task.service';
 import { BehaviorSubject, finalize, map, Observable, shareReplay, switchMap, take } from 'rxjs';
-import { TaskCreationRequestDTO, TaskResponseDTO } from '../../core/models/task.model';
-import { Page } from '../../core/models/pagination.interface';
+import { TaskCreationRequestDTO, TaskResponseDTO } from '@/core/models/task.model';
+import { Page } from '@/core/models/pagination.interface';
 
 @Component({
   selector: 'app-task-manager',

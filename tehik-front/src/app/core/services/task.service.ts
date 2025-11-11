@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { TaskCreationRequestDTO, TaskResponseDTO } from "../models/task.model";
-import { Page } from "../models/pagination.interface";
+import { TaskCreationRequestDTO, TaskResponseDTO } from "@/core/models/task.model";
+import { Page } from "@/core/models/pagination.interface";
 
 @Injectable({
     providedIn: 'root'
