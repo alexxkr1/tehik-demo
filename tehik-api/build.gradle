@@ -33,8 +33,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     def mapstructVersion = '1.5.5.Final'
-    implementation 'org.mapstruct:mapstruct:${mapstructVersion}'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:${mapstructVersion}'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
