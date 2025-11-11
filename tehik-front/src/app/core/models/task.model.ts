@@ -10,6 +10,7 @@ export interface TaskResponseDTO {
   resultValue: number | null;
   status: TaskStatus;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface TaskCreationRequestDTO {

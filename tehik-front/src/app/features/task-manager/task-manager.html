@@ -1,0 +1,80 @@
+<div>
+    @if (isEditing()) {
+    <h2>Your Tasks</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div>
+            <label for="taskValue">Task Value:</label>
+            <input id="taskValue" type="number" formControlName="originalValue" required />
+
+            @if (form.get('originalValue')?.invalid && form.get('originalValue')?.touched) {
+            <div>Task value is required and must be a number.</div>
+            }
+        </div>
+
+        <div>
+            <button style="margin-top: 1rem;" type="submit" [disabled]="form.invalid || isLoading()">
+                {{ isLoading() ? 'Processing...' : 'Create Task' }}
+            </button>
+        </div>
+    </form>
+
+    } @else {
+    <h2>Task List</h2>
+    <table border="1" cellspacing="0" cellpadding="4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Value</th>
+                <th>Result</th>
+                <th>Status</th>
+                <th>Updated At</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (task of tasks$ | async; track task.id) {
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.originalValue }}</td>
+                <td>
+                    {{ task.status === 'PENDING' ? 'Calculating...' : task.resultValue }}
+                </td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.createdAt | date:'medium' }}</td>
+                <td>{{ task.updatedAt | date:'medium' }}</td>
+
+            </tr>
+            } @empty {
+            <p>No tasks available</p>
+            }
+        </tbody>
+    </table>
+
+    <div style="margin-top: 1rem;">
+        @if (tasksPage$ | async; as pageData) {
+        <button type="button" (click)="prevPage()" [disabled]="currentPageSubject.value === 0">
+            Previous
+        </button>
+
+        <span>
+            Page {{ currentPageSubject.value + 1 }} of {{ pageData.totalPages }}
+        </span>
+
+        <button type="button" (click)="nextPage(pageData.totalPages)"
+            [disabled]="currentPageSubject.value + 1 >= pageData.totalPages">
+            Next
+        </button>
+        }
+    </div>
+    }
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button type="button" (click)="toggleEditing()">
+            {{ isEditing() ? 'Show your tasks' : 'Add new task' }}
+        </button>
+
+        <button type="button" (click)="refreshTasks()">
+            Refresh
+        </button>
+    </div>
+</div>
