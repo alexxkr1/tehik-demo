@@ -1,0 +1,13 @@
+# https://jonathanantoine.medium.com/hosting-an-angular-application-inside-a-docker-container-with-nginx-b10f3f0a4c26
+# Build
+FROM node:lts-slim AS build
+WORKDIR /src
+COPY package*.json ./
+RUN npm ci
+COPY . ./
+RUN npm run build -- --configuration=production --output-path=dist
+
+# Production
+FROM nginx:stable AS final
+EXPOSE 80
+COPY --from=build /src/dist/browser /usr/share/nginx/html
