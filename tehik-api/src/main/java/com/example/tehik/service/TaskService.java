@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,10 +19,12 @@ public class TaskService {
     private final TaskMapper taskMapper;
     private final TaskMessageProducer messageProducer;
 
+    @Transactional(readOnly = true)
     public Page<TaskResponseDTO> getTasksByIp(String ip, Pageable pageable){
         return taskRepository.findAllByIp(ip, pageable).map(taskMapper::toResponseDTO);
     }
 
+    @Transactional
     public TaskResponseDTO createTask(TaskCreationRequestDTO requestDTO, String ip) {
         Task task = taskMapper.toEntity(requestDTO);
 
