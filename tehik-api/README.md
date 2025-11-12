@@ -71,8 +71,6 @@ gradlew.bat test
 On macOS/Linux:
 ./gradlew test
 
-All integration and unit tests will execute automatically.
-Test reports are generated under build/reports/tests/test/index.html.
 
 NOTES
 
