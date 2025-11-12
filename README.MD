@@ -39,7 +39,7 @@ Backend:
 
 Swagger UI: http://localhost:8080/swagger-ui.html
 
-H2 Console: http://localhost:8080/h2-console
+H2 Console: http://localhost:8080/h2console
 
 Notes:
 
@@ -52,3 +52,21 @@ No authentication is implemented; all tasks are visible based on the user's IP a
 Frontend will display error until backend is completely running and accessible.
 
 Communication is happening in real-time using WebSockets and REST api.
+
+
+AI Usage Disclosure:
+
+AI assistance (OpenAI ChatGPT) was used during the development of this project to improve productivity and clarity.
+Specifically, AI tools were used to:
+
+Suggest clearer and more consistent commit message phrasing.
+
+Help design and refine unit-test structures and example test cases.
+
+Provide guidance and sample code for integrating WebSocket communication between the backend (Spring Boot) and frontend (Angular).
+
+Assist in preparing technical documentation, including this README and configuration instructions.
+
+Assist in preparing technical documentation, including this README and configuration instructions.
+
+All code and configurations were reviewed, tested, and finalized manually by the author.
