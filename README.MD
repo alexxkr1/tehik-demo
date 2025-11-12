@@ -48,3 +48,7 @@ The H2 database is in-memory and does not persist between application restarts.
 RabbitMQ is used for asynchronous task processing.
 
 No authentication is implemented; all tasks are visible based on the user's IP address.
+
+Frontend will display error until backend is completely running and accessible.
+
+Communication is happening in real-time using WebSockets and REST api.
