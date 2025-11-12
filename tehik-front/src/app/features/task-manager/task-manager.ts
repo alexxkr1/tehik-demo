@@ -2,9 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '@/core/services/task.service';
-import { BehaviorSubject, finalize, map, Observable, shareReplay, switchMap, take } from 'rxjs';
-import { TaskCreationRequestDTO, TaskResponseDTO } from '@/core/models/task.model';
+import {
+  BehaviorSubject,
+  finalize,
+  map,
+  Observable,
+  shareReplay,
+  Subscription,
+  switchMap,
+  take,
+} from 'rxjs';
+import { TaskResponseDTO, TaskStatus } from '@/core/models/task.model';
 import { Page } from '@/core/models/pagination.interface';
+import { TaskWebSocketService } from '@/core/services/task.websocket.service';
 
 @Component({
   selector: 'app-task-manager',
@@ -15,16 +25,15 @@ import { Page } from '@/core/models/pagination.interface';
 export class TaskManager {
   private formBuilder = inject(FormBuilder);
   private taskService = inject(TaskService);
+  private wsSub?: Subscription;
+
+  constructor(private taskWs: TaskWebSocketService) {}
 
   pageSize = signal(10);
   sortCriteria = signal<'asc' | 'desc'>('desc');
 
   isLoading = signal(false);
   isEditing = signal(false);
-
-  toggleEditing() {
-    this.isEditing.update((value) => !value);
-  }
 
   currentPageSubject = new BehaviorSubject<number>(0);
   currentPage$ = this.currentPageSubject.asObservable();
@@ -37,6 +46,24 @@ export class TaskManager {
   tasksPage$!: Observable<Page<TaskResponseDTO>>;
 
   ngOnInit() {
+    this.taskWs.connect();
+    this.taskWs.updates$.subscribe((update) => {
+      if (update) {
+        this.tasks$ = this.tasks$.pipe(
+          take(1),
+          map((tasks) =>
+            tasks.map((task) =>
+              task.id === update.id ? { ...task, ...update } : task
+            )
+          )
+        );
+
+        if (update.status === TaskStatus.DONE) {
+          this.taskWs.unsubscribeFromTask(update.id);
+        }
+      }
+    });
+
     this.tasksPage$ = this.currentPage$.pipe(
       switchMap((page) => {
         this.isLoading.set(true);
@@ -56,7 +83,12 @@ export class TaskManager {
     this.tasks$ = this.tasksPage$.pipe(map((page) => page.content));
   }
 
-  onSubmit() {
+  ngOnDestroy(): void {
+    this.wsSub?.unsubscribe();
+    this.taskWs.disconnect();
+  }
+
+  onSubmit(): void {
     if (this.form.invalid) return;
 
     this.isLoading.set(true);
@@ -72,6 +104,7 @@ export class TaskManager {
       )
       .subscribe({
         next: (res) => {
+          this.taskWs.subscribeToTask(res.id);
           this.currentPageSubject.next(0);
           this.isEditing.set(false);
         },
@@ -98,7 +131,11 @@ export class TaskManager {
     }
   }
 
-  refreshTasks() {
+  refreshTasks(): void {
     this.currentPageSubject.next(this.currentPageSubject.value);
+  }
+
+  toggleEditing(): void {
+    this.isEditing.update((value) => !value);
   }
 }
