@@ -2,8 +2,10 @@ package com.example.tehik.TaskUnitTests;
 
 import com.example.tehik.entity.Task;
 import com.example.tehik.enums.TaskStatus;
+import com.example.tehik.mappers.TaskMapper;
 import com.example.tehik.messaging.TaskMessageConsumer;
 import com.example.tehik.repository.TaskRepository;
+import com.example.tehik.service.TaskStatusUpdateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,12 @@ public class TaskMessageListenerTest {
 
     @Mock
     private TaskRepository taskRepository;
+
+    @Mock
+    private TaskMapper taskMapper;
+
+    @Mock
+    private TaskStatusUpdateService taskStatusUpdateService;
 
     @InjectMocks
     private TaskMessageConsumer consumer;
@@ -50,7 +58,6 @@ public class TaskMessageListenerTest {
     @Test
     @DisplayName("Should calculate result, update status to DONE, and save task")
     void receiveMessage_ProcessingSuccess() {
-
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(pendingTask));
 
         consumer.receiveMessage(taskId);
