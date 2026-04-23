@@ -1,4 +1,4 @@
-Tehik Infosystem - README
+# Tehik Infosystem - README
 
 Overview:
 This project is a simple infosystem that allows users to input a number, processes it asynchronously, and displays the results. It consists of a frontend (Angular) and a backend (Spring Boot) with RabbitMQ integration. The backend uses an H2 in-memory database for data storage.
@@ -9,7 +9,7 @@ frontend: tehik-front
 
 backend: tehik-api
 
-Tech Stack:
+## Tech Stack:
 
 Frontend: Angular
 
